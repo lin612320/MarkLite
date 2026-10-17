@@ -1,0 +1,10 @@
+node_modules/
+dist/
+release/
+.vite/
+src-tauri/target/
+src-tauri/gen/
+public/vditor/
+*.log
+.DS_Store
+Thumbs.db

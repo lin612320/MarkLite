@@ -1,0 +1,162 @@
+:root {
+  --bar-bg: #f3f4f6;
+  --bar-fg: #33373d;
+  --bar-border: #e2e5e9;
+  --btn-bg: #ffffff;
+  --btn-hover: #e8ebef;
+  --bg: #ffffff;
+  --fg: #24292f;
+}
+
+body.dark {
+  --bar-bg: #17191c;
+  --bar-fg: #d7dade;
+  --bar-border: #2b2f34;
+  --btn-bg: #22262b;
+  --btn-hover: #2d3238;
+  --bg: #1e2023;
+  --fg: #d6d9dd;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 顶栏 ---------- */
+#topbar {
+  flex: 0 0 auto;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+  border-bottom: 1px solid var(--bar-border);
+  -webkit-app-region: drag;
+}
+
+.brand {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+.doc-name {
+  font-size: 13px;
+  opacity: 0.72;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 46vw;
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.actions button {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: var(--bar-fg);
+  background: var(--btn-bg);
+  border: 1px solid var(--bar-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.actions button:hover {
+  background: var(--btn-hover);
+}
+
+.actions button:active {
+  transform: translateY(1px);
+}
+
+/* ---------- 编辑区 ---------- */
+#editor-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+#vditor {
+  height: 100%;
+  border: none !important;
+}
+
+/* 正文限宽居中，接近 Typora 的阅读宽度 */
+.vditor-ir .vditor-reset,
+.vditor-wysiwyg .vditor-reset,
+.vditor-sv .vditor-reset {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 32px 45vh;
+  line-height: 1.75;
+}
+
+.vditor-toolbar {
+  border-bottom: 1px solid var(--bar-border) !important;
+  background: var(--bar-bg) !important;
+}
+
+.vditor-toolbar__item button {
+  color: var(--bar-fg);
+}
+
+/* ---------- 状态栏 ---------- */
+#statusbar {
+  flex: 0 0 auto;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--bar-fg);
+  opacity: 0.75;
+  background: var(--bar-bg);
+  border-top: 1px solid var(--bar-border);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+#status-msg.saved {
+  color: #2ea043;
+  opacity: 1;
+}
+
+#status-msg.error {
+  color: #d1242f;
+  opacity: 1;
+}
+
+/* 去掉 Vditor 自带的边框圆角，贴合窗口 */
+.vditor {
+  border-radius: 0 !important;
+}

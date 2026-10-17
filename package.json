@@ -1,0 +1,61 @@
+{
+  "name": "marklite",
+  "version": "1.0.0",
+  "description": "墨笔 — 免费本地 Markdown 编辑器（即时渲染）",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "predev": "node tools/sync-vditor.mjs",
+    "prebuild": "node tools/sync-vditor.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "npm run build && electron .",
+    "start:dev": "electron .",
+    "dist": "npm run build && electron-builder --win",
+    "smoke": "node tools/smoke.mjs",
+    "postinstall": "node tools/sync-vditor.mjs",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@tauri-apps/api": "^2.12.4",
+    "@tauri-apps/plugin-dialog": "^2.8.3",
+    "vditor": "^4.0.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.3",
+    "electron": "^44.9.0",
+    "electron-builder": "^26.15.3",
+    "vite": "^8.3.4"
+  },
+  "build": {
+    "appId": "com.marklite.editor",
+    "productName": "MarkLite",
+    "copyright": "MIT Licensed",
+    "directories": {
+      "output": "D:/Tools/tmp/marklite-release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json",
+      "!**/*.map"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "src-tauri/icons/icon.ico"
+    },
+    "portable": {
+      "artifactName": "MarkLite-${version}-portable.exe"
+    }
+  }
+}
