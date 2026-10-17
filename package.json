@@ -37,7 +37,7 @@
     "productName": "MarkLite",
     "copyright": "MIT Licensed",
     "directories": {
-      "output": "D:/Tools/tmp/marklite-release"
+      "output": "release"
     },
     "files": [
       "dist/**/*",

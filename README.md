@@ -44,12 +44,18 @@ MarkLite/
 ## 常用命令
 
 ```bash
-npm install            # 安装依赖
+npm install            # 安装依赖（postinstall 自动同步 Vditor 离线资源）
 npm run dev            # 浏览器开发模式，http://localhost:1420
 npm run start          # 构建前端并用 Electron 打开
-npm run dist           # 打包免安装 exe（输出到 D:/Tools/tmp/marklite-release）
+npm run dist           # 打包免安装 exe（输出到 release/）
 npm run smoke          # 对运行中的应用跑冒烟检查
 ```
+
+> **Windows 打包报 `EPERM: operation not permitted, rename`**：这是 Defender 的受控文件夹访问锁住了 `win-unpacked` 目录。把输出目录临时改到别的盘即可：
+>
+> ```bash
+> npm run dist -- --config.directories.output=D:/tmp/marklite-release
+> ```
 
 ### 冒烟检查用法
 
