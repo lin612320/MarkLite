@@ -1,6 +1,6 @@
 {
   "name": "marklite",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "墨笔 — 免费本地 Markdown 编辑器（即时渲染）",
   "private": true,
   "type": "module",
@@ -48,11 +48,40 @@
     "win": {
       "target": [
         {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "src-tauri/icons/icon.ico"
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "md",
+          "markdown",
+          "mdown"
+        ],
+        "name": "Markdown",
+        "description": "Markdown 文档",
+        "icon": "src-tauri/icons/icon.ico",
+        "role": "Editor"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "墨笔"
     },
     "portable": {
       "artifactName": "MarkLite-${version}-portable.exe"

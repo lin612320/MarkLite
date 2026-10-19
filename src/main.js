@@ -125,6 +125,8 @@ let currentPath = null
 let dirty = false
 let ignoreMutation = false
 let metaTimer = null
+/** 编辑器就绪前收到的「打开文件」请求（冷启动双击 .md 时可能早于 Vditor 初始化） */
+let pendingOpen = null
 
 const docNameEl = document.getElementById('doc-name')
 const statusMsgEl = document.getElementById('status-msg')
@@ -210,6 +212,32 @@ async function openFile() {
   }
 }
 
+/**
+ * 应用一个「外部请求打开」的文件：文件关联双击、命令行参数、第二实例转发。
+ * 编辑器尚未就绪时先排队，等 after 回调再落地。
+ */
+function applyOpenFile(payload) {
+  if (!payload || typeof payload.text !== 'string' || !payload.path) return
+  if (!editorReady) {
+    pendingOpen = payload
+    return
+  }
+  if (dirty) {
+    const name = baseName(payload.path)
+    if (!window.confirm(`当前文档有未保存的修改，仍要打开「${name}」吗？`)) return
+  }
+  setEditorValue(payload.text)
+  currentPath = payload.path
+  updateTitle()
+  setStatus('已打开', 'saved')
+}
+
+/** 订阅主进程投递的打开请求（仅 Electron） */
+function bindFileOpenEvents() {
+  if (DESKTOP !== 'electron' || !window.marklite || !window.marklite.onOpenFile) return
+  window.marklite.onOpenFile((payload) => applyOpenFile(payload))
+}
+
 async function saveFile(forceDialog = false) {
   try {
     const text = vditor.getValue()
@@ -283,6 +311,12 @@ function createEditor() {
       setTimeout(() => {
         ignoreMutation = false
       }, 500)
+      // 冷启动双击 .md：文件先到、编辑器后好，此时补上
+      if (pendingOpen) {
+        const queued = pendingOpen
+        pendingOpen = null
+        applyOpenFile(queued)
+      }
     }
   })
 }
@@ -330,6 +364,7 @@ function boot() {
 
   createEditor()
   bindShortcuts()
+  bindFileOpenEvents()
 }
 
 boot()

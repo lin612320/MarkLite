@@ -13,15 +13,50 @@
 | 大纲面板 | 右侧标题大纲，随文档实时更新 |
 | 字数统计 | 词数 / 字符数 / 行数 |
 | 打开与保存 | `Ctrl+O` 打开、`Ctrl+S` 保存、`Ctrl+Shift+S` 另存为，原生系统对话框 |
-| 未保存提示 | 标题栏显示 `●` 标记 |
+| 双击打开 | 安装包注册 `.md` / `.markdown` / `.mdown` 关联，双击直接在墨笔中打开 |
+| 单实例 | 运行中再次双击文件复用现有窗口，不产生第二个进程 |
+| 未保存提示 | 标题栏显示 `●` 标记；打开新文件前会确认，避免覆盖 |
 | 主题切换 | 亮色 / 暗色，选择记忆在 `localStorage` |
 | 完全离线 | KaTeX、Mermaid、highlight.js 等全部随应用打包，不请求任何 CDN |
+
+## 安装与文件关联
+
+要让双击 `.md` 直接用墨笔打开，必须使用 **NSIS 安装包**（`MarkLite Setup x.y.z.exe`）。portable 版不写注册表，无法注册关联。
+
+安装程序写入的关联：
+
+```text
+HKCU\Software\Classes\.md        → Markdown
+HKCU\Software\Classes\Markdown   → "...\MarkLite.exe" "%1"
+```
+
+### 双击后仍被别的程序接管怎么办
+
+Windows 10/11 用 `UserChoice`（Win11 另有 `UserChoiceLatest`）记录用户首选程序，优先级**高于**安装程序写入的 `HKCU\Software\Classes`。常见抢占者：联想「超级文本编辑器」、Typora、VSCode、Trae 等。
+
+方式一，手动指定（推荐，最稳妥）：
+
+右键任一 `.md` 文件 → 打开方式 → 选择其他应用 → 选「墨笔」→ 勾选「始终使用此应用」。
+
+方式二，命令行清理（会丢掉其他程序的原有关联，先备份）：
+
+```powershell
+reg export 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.md' "$env:USERPROFILE\Desktop\md-backup.reg" /y
+
+Remove-Item 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.md\UserChoice' -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.md\UserChoiceLatest' -Recurse -Force -ErrorAction SilentlyContinue
+
+# 重启资源管理器，让 Shell 重新读取关联
+Stop-Process -Name explorer -Force; Start-Process explorer.exe
+```
+
+> 实测注意：portable 版运行时会解压到临时目录再启动，若曾手动把 portable 的 exe 设为打开方式，注册表里会留下 `Applications\MarkLite-1.0.0-portable.exe` 条目，抢占关联。换成安装版并清掉 `UserChoice` / `UserChoiceLatest` 后即恢复。
 
 ## 技术栈
 
 - 前端：Vite 8 + Vditor 4.0（MIT）
 - 外壳：Electron 44（`contextIsolation` 开启，`nodeIntegration` 关闭，`sandbox` 开启）
-- 文件能力：主进程 `ipcMain.handle` 提供的窄接口，preload 只暴露 5 个方法
+- 文件能力：主进程 `ipcMain.handle` 提供的窄接口，preload 只暴露 6 个方法（含 `onOpenFile` 事件订阅）
 
 > 仓库同时保留了 Tauri 2 的配置（`src-tauri/`），但本机缺少 MSVC 链接器，`tauri build` 无法链接。装上 Visual Studio C++ 生成工具后可直接复用；也可以先卸载 Electron 外壳。
 
